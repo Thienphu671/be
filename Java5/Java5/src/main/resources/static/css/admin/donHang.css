@@ -1,0 +1,107 @@
+
+/* Tiêu đề trang */
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+}
+
+/* Nội dung chính */
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.action-buttons button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.action-buttons button:hover {
+    background-color: #0056b3;
+}
+
+/* Bảng đơn hàng */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #007bff;
+    color: white;
+}
+
+.table td {
+    background-color: #f9f9f9;
+}
+
+/* Cột ảnh sản phẩm */
+.table img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Nút sửa và xóa */
+.btn-edit, .btn-delete {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-edit:hover {
+    background-color: #218838;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+/* Cải thiện trải nghiệm trên thiết bị di động */
+@media (max-width: 768px) {
+    .table th, .table td {
+        padding: 8px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .action-buttons button {
+        margin-bottom: 10px;
+    }
+}

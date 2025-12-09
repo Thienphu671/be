@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Quần Áo</title>
+
+    <link rel="stylesheet" th:href="@{/css/nguoiDung/trangChu.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <style>
+        /* Slider */
+        .banner-slider {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-height: 500px;
+        }
+
+        .slides {
+            display: flex;
+            transition: transform 1s ease-in-out;
+            width: 350%; /* Đảm bảo container đủ chỗ cho tất cả ảnh */
+        }
+
+        .slides img {
+            width: 10%;
+            /*height: auto; !* Tránh bóp méo ảnh *!*/
+            max-height: 700px; /* Giữ kích thước ảnh hợp lý */
+            object-fit: cover; /* Cắt ảnh để vừa khung */
+        }
+
+
+        /*@keyframes slide {*/
+        /*    0% { transform: translateX(0%); }*/
+        /*    33% { transform: translateX(-100%); }*/
+        /*    66% { transform: translateX(-200%); }*/
+        /*    100% { transform: translateX(0%); }*/
+        /*}*/
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 0px;
+        }
+
+        .hero .btn {
+            background-color: white;
+            color: #ff416c;
+            font-weight: bold;
+            padding: 10px 25px;
+            border-radius: 25px;
+            transition: 0.3s;
+        }
+
+        .hero .btn:hover {
+            background-color: #ff4b2b;
+            color: white;
+        }
+
+        /* Products */
+        .products {
+            padding: 50px 0;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+
+        .product {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+        }
+
+        .product img {
+            width: 100%; /* Đảm bảo ảnh luôn đầy đủ chiều rộng */
+            height: 250px; /* Chiều cao cố định cho ảnh */
+            object-fit: cover; /* Cắt ảnh vừa khung mà không bị méo */
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .product h4 {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .product p {
+            color: #ff416c;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: #ff416c;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #ff4b2b;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .slides {
+            display: flex;
+            transition: transform 1s ease-in-out;
+        }
+
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let slideIndex = 0;
+            const slides = document.querySelectorAll(".slides img");
+            const sliderContainer = document.querySelector(".slides");
+            const totalSlides = slides.length;
+
+            // Đặt chiều rộng chính xác cho slider container
+            sliderContainer.style.width = `${totalSlides * 100}%`;
+
+            function nextSlide() {
+                slideIndex = (slideIndex + 1) % totalSlides;
+                sliderContainer.style.transform = `translateX(-${slideIndex * (100 / totalSlides)}%)`;
+            }
+
+            setInterval(nextSlide, 4000); // Chuyển ảnh mỗi 4 giây
+        });
+
+    </script>
+
+</head>
+<body>
+
+<!-- Navbar -->
+<div th:replace="~{nguoiDung/navbar :: navbar}"></div>
+
+<!-- Banner Slider -->
+<section class="banner-slider" id="banner-slider">
+    <div class="slides">
+        <img th:src="@{/uploads/banner_1.jpg}" alt="Banner 1">
+        <img th:src="@{/uploads/banner-thoi-trang-nam-tinh.jpg}" alt="Banner 2">
+        <img th:src="@{/uploads/logo-banner-thoi-trang.jpg}" alt="Banner 3">
+        <img th:src="@{/uploads/banner-thoi-trang-da-dang.jpg}" alt="Banner 4">
+        <img th:src="@{/uploads/thong-tin-banner-thoi-trang.jpg}" alt="Banner 5">
+
+        <img th:src="@{/uploads/banner_1.jpg}" alt="Banner 6">
+        <img th:src="@{/uploads/banner-thoi-trang-nam-tinh.jpg}" alt="Banner 7">
+        <img th:src="@{/uploads/logo-banner-thoi-trang.jpg}" alt="Banner 8">
+        <img th:src="@{/uploads/banner-thoi-trang-da-dang.jpg}" alt="Banner 9">
+        <img th:src="@{/uploads/thong-tin-banner-thoi-trang.jpg}" alt="Banner 10">
+
+    </div>
+</section>
+
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h2>Thời Trang Đỉnh Cao</h2>
+        <p>Khám phá bộ sưu tập thời trang mới nhất ngay hôm nay!</p>
+        <button class="btn" th:onclick="|window.location.href='@{/sanPham}';|">Mua Ngay</button>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="products">
+    <div class="container">
+        <h3 class="mb-4">Sản Phẩm Nổi Bật</h3>
+        <div class="row">
+            <div class="col-md-4" th:each="sp : ${products}">
+                <div class="product">
+                    <img th:src="@{/uploads/{filename}(filename=${sp.hinh})}" alt="Sản phẩm" width="100%">
+                    <h4 th:text="${sp.ten}"></h4>
+                    <p th:text="${#numbers.formatDecimal(sp.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+                    <a class="btn btn-primary" th:href="@{/sanPham/detail/{id}(id=${sp.id})}">Xem Chi Tiết</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <p>&copy; Shop quần áo Những Chàng Ngu Làm Quan. All rights reserved.</p>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+</body>
+</html>

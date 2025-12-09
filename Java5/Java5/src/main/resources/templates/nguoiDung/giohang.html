@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+</head>
+<body>
+<div th:replace="~{nguoiDung/navbar :: navbar}"></div>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Giỏ hàng</h2>
+
+    <form id="updateForm" th:action="@{/giohang/capnhat}" method="post">
+        <input type="hidden" name="giohangId" id="giohangId">
+        <input type="hidden" name="soLuong" id="soLuong">
+    </form>
+
+    <table id="cartTable" class="table table-bordered display" th:if="${giohang != null and !giohang.isEmpty()}">
+        <thead>
+        <tr>
+            <th>Tên sản phẩm</th>
+            <th>Đơn giá</th>
+            <th>Số lượng</th>
+            <th>Tổng tiền</th>
+            <th>Hành động</th>
+            <th>Chọn</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${giohang}">
+            <td th:text="${item.sanpham.ten}"></td>
+            <td th:text="${#numbers.formatDecimal(item.sanpham.gia, 0, 'COMMA', 0, 'POINT') + ' VND'}"></td>
+            <td>
+                <button type="button" class="btn btn-sm btn-outline-primary decrease-qty" th:data-id="${item.id}">-</button>
+                <span th:id="'quantity-' + ${item.id}" th:text="${item.soLuong}"></span>
+                <button type="button" class="btn btn-sm btn-outline-primary increase-qty" th:data-id="${item.id}">+</button>
+            </td>
+            <td>
+                <span th:id="'total-' + ${item.id}"
+                      th:text="${#numbers.formatDecimal(item.sanpham.gia * item.soLuong, 0, 'COMMA', 0, 'POINT') + ' VND'}">
+                </span>
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm delete-btn"
+                        th:data-taikhoan="${item.taikhoan.id}"
+                        th:data-sanpham="${item.sanpham.id}">
+                    Xóa
+                </button>
+            </td>
+            <td>
+                <input type="checkbox" class="product-check"
+                       th:data-price="${item.sanpham.gia}"
+                       th:data-quantity="${item.soLuong}"
+                       th:data-max-quantity="${item.sanpham.soluong}"
+                       th:data-id="${item.id}"
+                       name="selectedProducts" th:value="${item.id}">
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${giohang == null or giohang.isEmpty()}" class="alert alert-warning">
+        Giỏ hàng của bạn đang trống.
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3" th:if="${giohang != null and !giohang.isEmpty()}">
+        <form id="checkoutForm" action="/order/checkout" method="post">
+            <input type="hidden" name="selectedProductIds" id="selectedProductIds">
+            <button type="submit" class="btn btn-primary">Mua hàng</button>
+        </form>
+
+        <h4>Tổng tiền: <span id="totalPrice">0</span> </h4>
+    </div>
+</div>
+
+
+
+
+<!-- Modal xác nhận xóa -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal thông báo -->
+<div class="modal fade" id="warningModal" tabindex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="warningModalLabel">Thông báo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="warningMessage">
+                <!-- Nội dung sẽ được cập nhật động -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+<!-- Script -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        let deleteTaikhoanId, deleteSanphamId;
+
+        $('#cartTable').DataTable({
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ mục mỗi trang",
+                "zeroRecords": "Không tìm thấy dữ liệu",
+                "info": "Hiển thị _PAGE_ của _PAGES_",
+                "infoEmpty": "Không có dữ liệu",
+                "infoFiltered": "(lọc từ tổng số _MAX_ mục)",
+                "search": "Tìm kiếm:",
+                "paginate": { "first": "Đầu", "last": "Cuối", "next": "Tiếp", "previous": "Trước" }
+            }
+        });
+
+        $(".increase-qty, .decrease-qty").click(function () {
+            let id = $(this).data("id");
+            let quantityElement = $("#quantity-" + id);
+            let totalElement = $("#total-" + id);
+            let checkbox = $(".product-check[data-id='" + id + "']");
+            let price = parseFloat(checkbox.data("price"));
+            let quantity = parseInt(quantityElement.text());
+            let maxQuantity = parseInt(checkbox.attr("data-max-quantity")); // Số lượng tối đa
+
+            if ($(this).hasClass("increase-qty")) {
+                if (quantity < maxQuantity) {
+                    quantity++;
+                } else {
+                    $("#warningMessage").text("Số lượng sản phẩm không đủ!");
+                    $("#warningModal").modal("show");
+                    return;
+                }
+            } else if ($(this).hasClass("decrease-qty") && quantity > 1) {
+                quantity--;
+            }
+
+            $.ajax({
+                url: "/giohang/capnhat",
+                type: "POST",
+                data: { giohangId: id, soLuong: quantity },
+                success: function () {
+                    quantityElement.text(quantity);
+                    totalElement.text((price * quantity).toLocaleString("vi-VN") + " VND");
+                    checkbox.attr("data-quantity", quantity); // Cập nhật số lượng trong checkbox
+                    updateTotalPrice();
+                },
+                error: function () {
+                    $("#warningMessage").text("Có lỗi xảy ra, vui lòng thử lại.");
+                    $("#warningModal").modal("show");
+                }
+            });
+        });
+
+
+
+        $(".delete-btn").click(function () {
+            deleteTaikhoanId = $(this).data("taikhoan");
+            deleteSanphamId = $(this).data("sanpham");
+            $("#confirmDeleteModal").modal("show");
+        });
+
+        $("#confirmDeleteBtn").click(function () {
+            $.ajax({
+                url: "/giohang/xoa/" + deleteTaikhoanId + "/" + deleteSanphamId,
+                type: "POST",
+                success: function () { location.reload(); },
+                error: function () { alert("Có lỗi xảy ra, vui lòng thử lại."); }
+            });
+        });
+
+        function updateTotalPrice() {
+            let total = 0;
+            $(".product-check:checked").each(function () {
+                let price = parseFloat($(this).data("price"));
+                let quantity = parseInt($(this).attr("data-quantity"));
+                total += price * quantity;
+            });
+            $("#totalPrice").text(total.toLocaleString("vi-VN") + " VND");
+        }
+
+        $(".product-check").change(updateTotalPrice);
+    });
+
+    $("#checkoutForm").submit(function (event) {
+        event.preventDefault(); // Ngăn chặn form gửi ngay lập tức
+
+        let selectedProducts = [];
+        $(".product-check:checked").each(function () {
+            selectedProducts.push($(this).val());
+        });
+
+        if (selectedProducts.length === 0) {
+            $("#warningMessage").text("Vui lòng chọn ít nhất một sản phẩm!");
+            $("#warningModal").modal("show");
+            return;
+        }
+
+        $("#selectedProductIds").val(selectedProducts.join(",")); // Gửi danh sách sản phẩm
+        this.submit();
+    });
+
+
+</script>
+
+</body>
+</html>

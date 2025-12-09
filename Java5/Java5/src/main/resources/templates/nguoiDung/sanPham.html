@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Sản Phẩm</title>
+    <link rel="stylesheet" th:href="@{/css/nguoiDung/sanPham.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+
+</head>
+<body>
+
+<div th:replace="~{nguoiDung/navbar :: navbar}"></div>
+
+<main class="product-section">
+    <div class="container">
+        <h2 class="section-title text-center">Danh Sách Sản Phẩm</h2>
+
+        <!-- Thanh tìm kiếm -->
+        <form th:action="@{/sanPham}" method="get" class="row g-2 align-items-center mb-4">
+            <div class="col-md-4">
+                <input type="text" name="keyword" class="form-control" placeholder="Nhập tên sản phẩm..." th:value="${param.keyword}">
+            </div>
+            <div class="col-md-4">
+                <select name="category" class="form-select">
+                    <option value="">Chọn danh mục</option>
+                    <option th:each="cate : ${categories}" th:value="${cate.id}" th:text="${cate.ten}"
+                            th:selected="${param.category == cate.id}"></option>
+                </select>
+            </div>
+
+            <div class="col-md-4 d-flex align-items-center">
+                <button type="submit" class="btn btn-primary me-2">Tìm kiếm</button>
+                <a href="/sanPham?sort=asc" class="btn btn-primary me-2">Giá Tăng Dần</a>
+                <a href="/sanPham?sort=desc" class="btn btn-primary">Giá Giảm Dần</a>
+            </div>
+
+        </form>
+
+        <!-- Hiển thị danh sách sản phẩm -->
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            <div class="col" th:each="sp : ${products}">
+                <div class="card h-100">
+                    <img th:src="@{/uploads/{filename}(filename=${sp.hinh})}" class="card-img-top" height="55%"  alt="Sản phẩm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title" th:text="${sp.ten}"></h5>
+                        <p class="card-text text-danger fw-bold"
+                           th:text="${#numbers.formatDecimal(sp.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+                        <button class="btn btn-primary btn-detail"
+                                th:data-id="${sp.id}"
+                                th:data-ten="${sp.ten}"
+                                th:data-gia="${sp.gia}"
+                                th:data-hinh="@{/uploads/{filename}(filename=${sp.hinh})}"
+                                th:data-kichthuoc="${sp.kichthuoc}"
+                                th:data-danhmuc="${sp.danhMuc.ten}"
+                                th:data-mota="${sp.mota}"
+                                data-bs-toggle="modal" data-bs-target="#productDetailModal">
+                            Xem Chi Tiết
+                        </button>
+                        <form th:action="@{/giohang/them}" method="post" class="mt-2">
+                            <input type="hidden" name="sanphamId" th:value="${sp.id}">
+                            <input type="number" name="soLuong" value="1" min="1" class="form-control mb-2"
+                                   style="width: 80px; display: inline-block;">
+                            <button type="submit" class="btn btn-success btn-sm">Thêm vào giỏ hàng</button>
+                        </form>
+                        <a href="#" class="btn btn-outline-danger btn-sm btn-wishlist" th:data-id="${sp.id}">
+                            <i class="bi bi-heart"></i> Yêu thích
+                        </a>
+                        <form id="checkoutForm" action="/order/checkout" method="post">
+                            <input type="hidden" name="selectedProductIds" id="selectedProductIds">
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Phân trang -->
+        <nav aria-label="Pagination" class="d-flex justify-content-center mt-3">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/sanPham(page=${currentPage - 1}, size=${size})}">&laquo;</a>
+                </li>
+
+                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/sanPham(page=${i}, size=${size})}">[[${i + 1}]]</a>
+                </li>
+
+                <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/sanPham(page=${currentPage + 1}, size=${size})}">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+
+
+    </div>
+</main>
+
+<!-- Modal Chi Tiết Sản Phẩm -->
+<div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productDetailModalLabel">Chi Tiết Sản Phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <img id="modalProductImage" src="" class="img-fluid rounded" alt="Sản phẩm">
+                    </div>
+                    <div class="col-md-7">
+                        <h3 id="modalProductName" class="fw-bold"></h3>
+                        <p class="text-danger fw-bold fs-4" id="modalProductPrice"></p>
+                        <p><strong>Danh mục:</strong> <span id="modalProductCategory"></span></p>
+                        <p><strong>Kích thước:</strong> <span id="modalProductSize"></span></p>
+                        <p><strong>Mô tả:</strong></p>
+                        <p id="modalProductDescription"></p>
+
+                        <form th:action="@{/giohang/them}" method="post">
+                            <input type="hidden" name="sanphamId" id="modalProductId">
+                            <input type="number" name="soLuong" value="1" min="1" class="form-control mb-2"
+                                   style="width: 80px; display: inline-block;">
+                            <button type="submit" class="btn btn-success">Thêm vào giỏ hàng</button>
+                        </form>
+
+                        <a id="modalWishlistButton" href="#" class="btn btn-outline-danger mt-2">
+                            <i class="bi bi-heart"></i> Yêu thích
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal thông báo -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="errorModalLabel">Thông báo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <span th:text="${error}"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var errorMessage = /*[[${error}]]*/ null;
+    if (errorMessage) {
+        var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
+        myModal.show();
+    }
+    /*]]>*/
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Xử lý khi nhấn vào nút "Xem Chi Tiết"
+        document.querySelectorAll(".btn-detail").forEach(button => {
+            button.addEventListener("click", function () {
+                document.getElementById("modalProductName").innerText = this.dataset.ten;
+                document.getElementById("modalProductPrice").innerText = this.dataset.gia + " ₫";
+                document.getElementById("modalProductImage").src = this.dataset.hinh;
+                document.getElementById("modalProductSize").innerText = this.dataset.kichthuoc;
+                document.getElementById("modalProductCategory").innerText = this.dataset.danhmuc;
+                document.getElementById("modalProductDescription").innerText = this.dataset.mota;
+
+                // Gán ID cho nút yêu thích trong modal
+                let wishlistButton = document.getElementById("modalWishlistButton");
+                wishlistButton.href = "#";
+                wishlistButton.dataset.id = this.dataset.id;
+                wishlistButton.dataset.added = "false"; // Mặc định chưa yêu thích
+                wishlistButton.innerHTML = `<i class="bi bi-heart"></i> Yêu thích`;
+            });
+        });
+    });
+</script>
+<script>
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        let userId = await getCurrentUserId();
+        if (!userId) {
+            console.warn("Chưa đăng nhập, không thể tải danh sách yêu thích.");
+            return;
+        }
+
+        // 🔥 Xóa danh sách yêu thích nếu user đăng nhập mới
+        if (localStorage.getItem("lastUserId") !== userId) {
+            localStorage.removeItem("favoriteProducts");
+            localStorage.setItem("lastUserId", userId);
+        }
+
+        let favoriteProducts = JSON.parse(localStorage.getItem("favoriteProducts")) || [];
+
+        // 🚀 Hàm cập nhật trạng thái nút yêu thích
+        function updateWishlistButtons() {
+            document.querySelectorAll(".btn-wishlist").forEach(button => {
+                let productId = button.dataset.id;
+                let isFavorite = favoriteProducts.some(p => p.id === productId);
+
+                if (isFavorite) {
+                    button.classList.add("active");
+                    button.innerHTML = `<i class="bi bi-heart-fill"></i> Đã yêu thích`;
+                } else {
+                    button.classList.remove("active");
+                    button.innerHTML = `<i class="bi bi-heart"></i> Yêu thích`;
+                }
+            });
+        }
+
+        // 🚀 Cập nhật trạng thái nút khi tải trang
+        updateWishlistButtons();
+
+        // 📌 Xử lý sự kiện click nút yêu thích
+        document.querySelectorAll(".btn-wishlist").forEach(button => {
+            button.addEventListener("click", async function (event) {
+                event.preventDefault();
+                let productId = this.dataset.id;
+                let productName = this.dataset.ten;
+                let productPrice = this.dataset.gia;
+                let productImage = this.dataset.hinh;
+
+                let existingIndex = favoriteProducts.findIndex(p => p.id === productId);
+
+                if (existingIndex !== -1) {
+                    // ❌ Xóa khỏi danh sách yêu thích
+                    favoriteProducts.splice(existingIndex, 1);
+                    this.classList.remove("active");
+                    this.innerHTML = `<i class="bi bi-heart"></i> Yêu thích`;
+
+                    try {
+                        let response = await fetch(`/favorites/remove/${productId}`, { method: "GET" });
+                        if (!response.ok) throw new Error("Lỗi khi xóa sản phẩm yêu thích.");
+                    } catch (error) {
+                        console.error(error);
+                    }
+                } else {
+                    // ✅ Thêm vào danh sách yêu thích
+                    favoriteProducts.push({ id: productId, ten: productName, gia: productPrice, hinh: productImage });
+                    this.classList.add("active");
+                    this.innerHTML = `<i class="bi bi-heart-fill"></i> Đã yêu thích`;
+
+                    try {
+                        let response = await fetch(`/favorites/add/${productId}`, { method: "GET" });
+                        if (!response.ok) throw new Error("Lỗi khi thêm sản phẩm vào yêu thích.");
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+
+                // 🔥 Lưu danh sách yêu thích vào LocalStorage
+                localStorage.setItem("favoriteProducts", JSON.stringify(favoriteProducts));
+            });
+        });
+    });
+
+    // 📌 Hàm lấy ID user đăng nhập
+    async function getCurrentUserId() {
+        try {
+            let response = await fetch("/current-user");
+            if (!response.ok) throw new Error("Không thể lấy thông tin user.");
+            let data = await response.json();
+            return data.userId;
+        } catch (error) {
+            console.warn("Không thể lấy user ID:", error);
+            return null;
+        }
+    }
+
+
+</script>
+
+
+</body>
+</html>

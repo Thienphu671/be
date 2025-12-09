@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Danh Sách Đơn Hàng</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Thêm Bootstrap Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        /* Hiệu ứng navbar */
+        .navbar-nav .nav-link {
+            transition: all 0.3s ease-in-out;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffc107 !important;
+            transform: scale(1.05);
+        }
+        /* Xuống dòng mô tả sau 30 ký tự */
+        td.mota {
+            white-space: pre-line;
+            word-wrap: break-word;
+            max-width: 200px; /* Giới hạn chiều rộng */
+        }
+    </style>
+</head>
+<body>
+<!-- Thanh navbar -->
+<div th:replace="~{nguoiDung/navbar :: navbar}"></div>
+
+<div class="container mt-5">
+    <h2 class="text-center">Danh Sách Đơn Hàng</h2>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Khách Hàng</th>
+            <th>Ngày Đặt</th>
+            <th>Địa Chỉ</th>
+            <th>Trạng Thái</th>
+            <th>Chi Tiết</th>
+            <th>Hành Động</th> <!-- Thêm cột cho nút xác nhận -->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.id}"></td>
+            <td th:text="${order.user.fullname}"></td>
+            <td th:text="${order.orderDate}"></td>
+            <td th:text="${order.address}"></td>
+            <td>
+                <span th:if="${order.status == 1}" class="badge bg-success">Đã xác nhận</span>
+                <span th:if="${order.status == 0}" class="badge bg-warning">Chưa xác nhận</span>
+                <span th:if="${order.status == 2}" class="badge bg-danger">Đã hủy</span>
+            </td>
+            <td>
+                <a th:href="@{/ordersND/{id}(id=${order.id})}" class="btn btn-info btn-sm">Xem</a>
+            </td>
+            <td>
+
+                <form th:action="@{/cancelND/{id}(id=${order.id})}" method="post">
+                    <button type="submit" th:if="${order.status == 0}" class="btn btn-danger btn-sm">
+                        Hủy đơn
+                    </button>
+                </form>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

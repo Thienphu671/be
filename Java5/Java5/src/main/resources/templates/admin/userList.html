@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Tài Khoản</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" th:href="@{/css/admin/taiKhoan.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
+    <style>
+        /* Thu nhỏ ảnh đại diện */
+        .avatar {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div th:fragment="navbar">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007bff; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-white" href="#">
+                <i class="fas fa-cogs me-2"></i> Admin Panel
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" th:href="@{/admin/sanpham}">
+                            <i class="fas fa-box me-1"></i> Sản Phẩm
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" th:href="@{/categories}">
+                            <i class="fas fa-list me-1"></i> Danh Mục
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white" th:href="@{/list/users}">
+                            <i class="fas fa-users me-1"></i> Người Dùng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" th:href="@{/donHang/form}">
+                            <i class="fas fa-shopping-cart me-1"></i> Đơn Hàng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" th:href="@{/admin/revenue/thongke}">
+                            <i class="fas fa-chart-line me-1"></i> Doanh Thu
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Hiển thị tên Admin và Đăng xuất -->
+                <ul class="navbar-nav">
+                    <li class="nav-item d-flex align-items-center" th:if="${session.userName != null}">
+            <span class="nav-link text-white">
+              <i class="fas fa-user-circle me-1"></i> Xin chào, <span class="fw-bold" th:text="${session.userName}"></span>
+            </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-danger fw-bold logout-btn" th:href="@{/trangChu/form}">
+                            <i class="fas fa-sign-out-alt me-1"></i> Đăng Xuất
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <style>
+        /* Hiệu ứng hover cho navbar */
+        .navbar-nav .nav-link {
+            transition: all 0.3s ease-in-out;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffc107 !important;
+            transform: scale(1.05);
+        }
+
+        /* Làm nổi bật mục active */
+        .navbar-nav .nav-item .nav-link.active {
+            color: #ffc107 !important;
+            font-weight: bold;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Hiệu ứng đăng xuất */
+        .logout-btn {
+            transition: all 0.3s ease-in-out;
+        }
+        .logout-btn:hover {
+            color: white !important;
+            background-color: #dc3545;
+            transform: scale(1.1);
+        }
+    </style>
+</div>
+
+<div class="container mt-5">
+    <h1>Danh Sách Tài Khoản Người Dùng</h1>
+
+    <!-- Bảng Danh Sách Tài Khoản -->
+    <table id="userTable" class="table table-striped">
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên Người Dùng</th>
+            <th>Email</th>
+            <th>Số Điện Thoại</th>
+            <th>Ảnh</th>
+            <th>Kích Hoạt</th>
+            <th>Quản Trị</th>
+            <th>Hành Động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user, iterStat : ${users}" th:if="${!user.admin}">
+            <td th:text="${iterStat.count}"></td>
+            <td th:text="${user.fullname}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.phoneNumber}"></td>
+            <td>
+                <img th:src="@{${user.photo != null ? '/uploads/' + user.photo : '/images/default-avatar.png'}}"
+                     alt="Ảnh đại diện" class="avatar">
+            </td>
+            <td>
+                <form th:action="@{/list/users/toggleActive/{id}(id=${user.id})}" method="post">
+                    <button type="submit" class="btn btn-sm"
+                            th:classappend="${user.activated} ? 'btn-success' : 'btn-warning'">
+                        <span th:text="${user.activated} ? 'Đã kích hoạt' : 'Chưa kích hoạt'"></span>
+                    </button>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/list/users/toggleAdmin/{id}(id=${user.id})}" method="post">
+                    <button type="submit" class="btn btn-sm"
+                            th:classappend="${user.admin} ? 'btn-primary' : 'btn-secondary'">
+                        <span th:text="${user.admin} ? 'Admin' : 'User'"></span>
+                    </button>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/delete/{id}(id=${user.id})}" method="post"
+                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này không?');">
+                    <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+</div>
+
+<!-- JavaScript -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+<!-- DataTables JavaScript -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#userTable').DataTable({
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "lengthMenu": [5, 10, 25, 50],
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ tài khoản mỗi trang",
+                "zeroRecords": "Không tìm thấy tài khoản nào",
+                "info": "Trang _PAGE_ trên _PAGES_",
+                "infoEmpty": "Không có dữ liệu",
+                "infoFiltered": "(Lọc từ tổng _MAX_ tài khoản)",
+                "search": "Tìm kiếm:",
+                "paginate": {
+                    "first": "Đầu",
+                    "last": "Cuối",
+                    "next": "Tiếp",
+                    "previous": "Trước"
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

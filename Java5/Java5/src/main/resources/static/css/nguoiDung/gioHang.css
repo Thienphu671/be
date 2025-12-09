@@ -1,0 +1,99 @@
+/* Đặt nền cho toàn bộ trang */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Tiêu đề giỏ hàng */
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #333;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+/* Giỏ hàng và các sản phẩm */
+.cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+/* Mỗi sản phẩm trong giỏ hàng */
+.cart-item {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cart-item img {
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+}
+
+.item-info {
+    flex-grow: 1;
+}
+
+.item-info h4 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.item-info p {
+    font-size: 1rem;
+    color: #333;
+}
+
+.item-quantity {
+    margin-top: 10px;
+}
+
+.item-quantity label {
+    margin-right: 10px;
+}
+
+.item-quantity input {
+    width: 50px;
+    padding: 5px;
+}
+
+/* Nút xóa */
+.remove-item {
+    margin-left: 20px;
+}
+
+/* Tổng tiền */
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+/* Các hành động giỏ hàng (nút thanh toán) */
+.cart-actions {
+    text-align: center;
+}
+
+.cart-actions .btn {
+    font-size: 1.2rem;
+    padding: 10px 30px;
+    margin-top: 20px;
+}
+
+/* Footer */
+footer {
+    background-color: #343a40;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}

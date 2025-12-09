@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nhập Mã Xác Nhận</title>
+</head>
+<body>
+<h2>Nhập Mã Xác Nhận</h2>
+<form action="/quenMatKhau/resetPassword" method="POST">
+    <input type="text" name="token" placeholder="Nhập mã xác nhận" required>
+    <button type="submit">Tiến Hành Đổi Mật Khẩu</button>
+</form>
+<div th:if="${error}" style="color: red;">[[${error}]]</div>
+<div th:if="${message}" style="color: green;">[[${message}]]</div>
+</body>
+</html>

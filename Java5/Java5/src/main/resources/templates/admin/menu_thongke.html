@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thống kê Doanh thu</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<body>
+<div th:replace="~{admin/navbar :: navbar}"></div>
+
+
+    <style>
+        /* Hiệu ứng hover cho navbar */
+        .navbar-nav .nav-link {
+            transition: all 0.3s ease-in-out;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffc107 !important;
+            transform: scale(1.05);
+        }
+
+        /* Làm nổi bật mục active */
+        .navbar-nav .nav-item .nav-link.active {
+            color: #ffc107 !important;
+            font-weight: bold;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Hiệu ứng đăng xuất */
+        .logout-btn {
+            transition: all 0.3s ease-in-out;
+        }
+        .logout-btn:hover {
+            color: white !important;
+            background-color: #dc3545;
+            transform: scale(1.1);
+        }
+    </style>
+</div>
+<div class="container mt-4">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Thống kê</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/revenue/thongke}">Doanh thu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/revenue/sanphamyeuthich}">Sản phẩm yêu thích</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/revenue/sanphambanchay}">Sản phẩm bán chạy</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+</body>
+</body>
+</html>

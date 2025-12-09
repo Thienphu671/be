@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Thông Tin Cá Nhân</title>
+
+  <!-- Bootstrap & FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <style>
+    body {
+      background-color: #f4f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .profile-container {
+      max-width: 500px;
+      padding: 25px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .avatar-container {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .avatar-container img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #007bff;
+      transition: 0.3s;
+    }
+
+    .avatar-container img:hover {
+      transform: scale(1.05);
+      border-color: #0056b3;
+    }
+
+    .info {
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .btn-custom {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .btn-custom:hover {
+      transform: scale(1.02);
+    }
+  </style>
+</head>
+<body>
+
+<div class="profile-container">
+  <h2 class="mb-4">Thông Tin Cá Nhân</h2>
+
+  <div class="avatar-container">
+    <img th:src="@{${user.photo != null ? '/uploads/' + user.photo : '/images/default-avatar.png'}}" alt="Ảnh đại diện" />
+  </div>
+
+  <div class="info"><strong>Email:</strong><span th:text="${user?.email}"></span></div>
+  <div class="info"><strong>Họ Tên:</strong><span th:text="${user?.fullname}"></span></div>
+  <div class="info"><strong>Số Điện Thoại:</strong><span th:text="${user?.phoneNumber}"></span></div>
+  <div class="info"><strong>Trạng Thái:</strong><span th:text="${user?.activated ? 'Đã kích hoạt' : 'Chưa kích hoạt'}"></span></div>
+  <div class="info"><strong>Quyền Quản Trị:</strong><span th:text="${user?.admin ? 'Có' : 'Không'}"></span></div>
+
+  <a href="/thayDoiThongTin" class="btn btn-primary btn-custom mt-3"><i class="fa fa-edit"></i> Chỉnh sửa thông tin</a>
+  <a href="/trangChu/form" class="btn btn-secondary btn-custom mt-2"><i class="fa fa-home"></i> Về Trang Chủ</a>
+  <a href="/logout" class="btn btn-danger btn-custom mt-2"><i class="fa fa-sign-out-alt"></i> Đăng xuất</a>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

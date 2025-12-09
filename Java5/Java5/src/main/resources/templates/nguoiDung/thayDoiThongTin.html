@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thay đổi thông tin</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px;
+            text-align: left;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            background: white;
+        }
+        .input-group i {
+            padding: 10px;
+            color: #666;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            background: transparent;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .back-link {
+            display: block;
+            margin-top: 15px;
+            text-decoration: none;
+            color: #007bff;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .back-link i {
+            margin-right: 5px;
+        }
+        .back-link:hover {
+            color: #0056b3;
+        }
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 2px solid #ccc;
+        }
+        .alert {
+            color: white;
+            background-color: #28a745;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .error {
+            color: white;
+            background-color: #dc3545;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .field-error {
+            color: #dc3545;
+            font-size: 12px;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        // Xem trước ảnh
+        function previewImage(event) {
+            var file = event.target.files[0];
+            if (file && file.size > 2 * 1024 * 1024) {
+                alert("Ảnh phải nhỏ hơn 2MB!");
+                event.target.value = "";
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('preview');
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <h2><i class="fas fa-user-edit"></i> Thay đổi thông tin cá nhân</h2>
+
+    <!-- Thông báo thành công -->
+    <div th:if="${successMessage}" class="alert">
+        <span th:text="${successMessage}"></span>
+    </div>
+
+    <!-- Thông báo lỗi chung -->
+    <div th:if="${error}" class="error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Thông báo lỗi số điện thoại -->
+    <div th:if="${phoneError}" class="error">
+        <span th:text="${phoneError}"></span>
+    </div>
+
+    <img th:src="@{${user.photo != null ? '/uploads/' + user.photo : '/images/default-avatar.png'}}"
+         alt="Ảnh đại diện" class="avatar" id="preview">
+
+    <form action="/thayDoiThongTin" method="post" enctype="multipart/form-data">
+        <label>Email:</label>
+        <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input type="email" name="email" th:value="${user.email}" required />
+        </div>
+        <div class="field-error" th:if="${error != null && error.contains('Email')}" th:text="${error}"></div>
+
+        <label>Họ tên:</label>
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" name="fullname" th:value="${user.fullname}" />
+        </div>
+        <div class="field-error" th:if="${error != null && error.contains('Họ tên')}" th:text="${error}"></div>
+
+        <label>Số điện thoại:</label>
+        <div class="input-group">
+            <i class="fas fa-phone"></i>
+            <input type="text" name="phone" th:value="${user.phoneNumber}" />
+        </div>
+        <div class="field-error" th:if="${phoneError != null}" th:text="${phoneError}"></div>
+
+        <label>Hình ảnh (tối đa 2MB):</label>
+        <div class="input-group">
+            <i class="fas fa-image"></i>
+            <input type="file" name="photo" id="photoInput" accept="image/*" onchange="previewImage(event)">
+        </div>
+        <div class="field-error" th:if="${error != null && error.contains('file')}" th:text="${error}"></div>
+
+        <button type="submit"><i class="fas fa-save"></i> Lưu thay đổi</button>
+    </form>
+
+    <a href="/thongtin" class="back-link"><i class="fas fa-arrow-left"></i> Quay lại</a>
+</div>
+</body>
+</html>

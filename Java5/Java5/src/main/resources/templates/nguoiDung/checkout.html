@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="text-center text-primary">Thông tin đặt hàng</h2>
+
+        <form th:action="@{/order/placeOrder}" method="post">
+            <div class="mb-3">
+                <label class="form-label">Khách hàng:</label>
+                <input type="text" class="form-control" th:value="${fullname}">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Số điện thoại:</label>
+                <input type="text" class="form-control" id="phone" name="phone" th:value="${phone}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="address" class="form-label">Địa chỉ giao hàng:</label>
+                <input type="text" class="form-control" id="address" name="address" th:value="${#strings.replace(address, '+', ' ')}" required>
+            </div>
+
+            <h3 class="mt-4">Danh sách sản phẩm trong giỏ hàng</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead class="table-primary">
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                    </thead>
+                    <tbody id="cart-items">
+                    <tr th:each="item : ${selectedItems}">
+                        <td th:text="${item.sanpham.ten}"></td>
+                        <td class="price" th:text="${item.sanpham.gia}" th:data-gia="${item.sanpham.gia}"></td>
+                        <td class="quantity" th:text="${item.soLuong}" th:data-soluong="${item.soLuong}"></td>
+                        <td class="subtotal"></td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Tổng tiền:</td>
+                        <td id="totalAmount" class="fw-bold text-danger">0 VNĐ</td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a class="btn btn-secondary" th:href="@{/giohang}">Quay lại giỏ hàng</a>
+                <button type="submit" class="btn btn-success">Đặt hàng</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function calculateTotal() {
+        let total = 0;
+        document.querySelectorAll("#cart-items tr").forEach(row => {
+            let price = parseFloat(row.querySelector(".price").dataset.gia || 0);
+            let quantity = parseInt(row.querySelector(".quantity").dataset.soluong || 1);
+            let subtotal = price * quantity;
+
+            row.querySelector(".subtotal").textContent = new Intl.NumberFormat('vi-VN').format(subtotal) + " VNĐ";
+            total += subtotal;
+        });
+
+        document.getElementById("totalAmount").textContent = new Intl.NumberFormat('vi-VN').format(total) + " VNĐ";
+    }
+
+    // Gọi hàm tính tổng khi trang tải xong
+    document.addEventListener("DOMContentLoaded", calculateTotal);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

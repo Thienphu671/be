@@ -1,0 +1,62 @@
+
+
+/* Tiêu đề trang */
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #333;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+/* Định dạng các section */
+section {
+    background-color: #fff;
+    margin-bottom: 30px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Tiêu đề trong mỗi section */
+section h3 {
+    font-size: 1.8rem;
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+/* Đoạn văn bản trong mỗi section */
+section p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Định dạng danh sách liên hệ */
+section ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+section ul li {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+/* Định dạng footer */
+footer {
+    background-color: #343a40;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+
+
+
+/* Định dạng phần của các card sản phẩm */
+footer p {
+    margin: 0;
+    font-size: 1rem;
+}

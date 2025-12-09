@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thống kê sản phẩm yêu thích</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+    select {
+      padding: 8px;
+      font-size: 16px;
+    }
+    canvas {
+      margin-top: 20px;
+      max-width: 80%;
+    }
+    .spinner-border {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div class="container mt-4">
+  <div th:replace="~{admin/navbar :: navbar}"></div>
+
+  <div class="container mt-4">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="#">Thống kê</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/admin/revenue/thongke}">Doanh thu</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/admin/revenue/sanphamyeuthich}">Sản phẩm yêu thích</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/admin/revenue/sanphambanchay}">Sản phẩm bán chạy</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <h3 class="text-center">Thống kê sản phẩm được yêu thích</h3>
+
+  <div class="row justify-content-center">
+    <!-- Chọn năm -->
+    <div class="col-md-3">
+      <label for="yearSelect" class="form-label">Chọn năm:</label>
+      <select id="yearSelect" class="form-select">
+        <option value="">Chọn năm</option>
+        <option th:each="year : ${years}" th:value="${year}" th:text="${year}"></option>
+      </select>
+    </div>
+
+    <!-- Chọn tháng -->
+    <div class="col-md-3">
+      <label for="monthSelect" class="form-label">Chọn tháng:</label>
+      <select id="monthSelect" class="form-select" disabled>
+        <option value="">Chọn tháng</option>
+      </select>
+    </div>
+
+    <!-- Chọn ngày -->
+    <div class="col-md-3">
+      <label for="daySelect" class="form-label">Chọn ngày:</label>
+      <select id="daySelect" class="form-select" disabled>
+        <option value="">Chọn ngày</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Spinner khi tải dữ liệu -->
+  <div class="mt-3">
+    <div class="spinner-border text-primary" id="loadingSpinner"></div>
+  </div>
+
+  <!-- Biểu đồ -->
+  <canvas id="chartInstance" class="mt-4"></canvas>
+</div>
+
+  <script>
+    let favoriteChart;
+    document.addEventListener("DOMContentLoaded", function () {
+      const yearSelect = document.getElementById("yearSelect");
+      const monthSelect = document.getElementById("monthSelect");
+      const daySelect = document.getElementById("daySelect");
+      const chartCanvas = document.getElementById("chartInstance").getContext("2d");
+      let chartInstance = null;
+
+      function showLoading(show) {
+        document.getElementById("loadingSpinner").style.display = show ? "block" : "none";
+      }
+
+      function resetSelect(selectElement, placeholder) {
+        selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+        selectElement.disabled = true;
+      }
+
+      function fetchAndRenderChart(url) {
+        showLoading(true);
+        fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                  if (!data || Object.keys(data).length === 0) {
+                    console.warn("Không có dữ liệu.");
+                    return;
+                  }
+
+                  const labels = Object.keys(data); // Lấy các key làm nhãn
+                  const values = Object.values(data); // Lấy các value làm dữ liệu
+
+                  if (chartInstance) chartInstance.destroy();
+
+                  chartInstance = new Chart(chartCanvas, {
+                    type: 'line',  // Đổi từ 'bar' thành 'line'
+                    data: {
+                      labels: labels,
+                      datasets: [{
+                        label: 'Lượt yêu thích',
+                        data: values,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: "rgba(54, 162, 235, 0.2)",
+                        borderWidth: 2,
+                        pointBackgroundColor: "rgba(54, 162, 235, 1)",
+                        pointBorderColor: "#fff",
+                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.3  // Làm mềm đường biểu đồ
+                      }]
+                    },
+                    options: {
+                      responsive: true,
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          ticks: {
+                            callback: function (value) {
+                              return value.toLocaleString();
+                            }
+                          }
+                        }
+                      }
+                    }
+                  });
+                })
+                .catch(error => console.error("Lỗi khi lấy dữ liệu biểu đồ:", error))
+                .finally(() => showLoading(false));
+      }
+
+
+
+      function loadYears() {
+        showLoading(true);
+        fetch("/admin/revenue/most-favorite/available-years")
+                .then(response => response.json())
+                .then(years => {
+                  yearSelect.innerHTML = '<option value="">Chọn năm</option>';
+                  years.forEach(year => {
+                    let option = new Option(year, year);
+                    yearSelect.appendChild(option);
+                  });
+                  yearSelect.disabled = false;
+                })
+                .catch(error => console.error("Lỗi khi lấy danh sách năm:", error))
+                .finally(() => showLoading(false));
+      }
+
+      yearSelect.addEventListener("change", function () {
+        const year = this.value;
+        resetSelect(monthSelect, "Chọn tháng");
+        resetSelect(daySelect, "Chọn ngày");
+
+        if (!year) return;
+
+        fetchAndRenderChart(`/admin/revenue/most-favorite/${year}`);
+
+        fetch("/admin/revenue/most-favorite/2025")
+                .then(response => response.json())
+                .then(data => {
+                  console.log("Dữ liệu API trả về:", data); // Kiểm tra dữ liệu
+                })
+                .catch(error => console.error("Lỗi khi lấy dữ liệu biểu đồ:", error));
+
+
+        showLoading(true);
+        fetch(`/admin/revenue/most-favorite/available-months/${year}`)
+                .then(response => response.json())
+                .then(months => {
+                  months.forEach(month => {
+                    let option = new Option(`Tháng ${month}`, month);
+                    monthSelect.appendChild(option);
+                  });
+                  monthSelect.disabled = false;
+                })
+                .catch(error => console.error("Lỗi khi lấy danh sách tháng:", error))
+                .finally(() => showLoading(false));
+      });
+
+      monthSelect.addEventListener("change", function () {
+        const year = yearSelect.value;
+        const month = this.value;
+        resetSelect(daySelect, "Chọn ngày");
+
+        if (!month) return;
+
+        fetchAndRenderChart(`/admin/revenue/most-favorite/${year}/${month}`);
+
+        showLoading(true);
+        fetch(`/admin/revenue/most-favorite/available-days/${year}/${month}`)
+                .then(response => response.json())
+                .then(days => {
+                  days.forEach(day => {
+                    let option = new Option(`Ngày ${day}`, day);
+                    daySelect.appendChild(option);
+                  });
+                  daySelect.disabled = false;
+                })
+                .catch(error => console.error("Lỗi khi lấy danh sách ngày:", error))
+                .finally(() => showLoading(false));
+      });
+
+
+
+      daySelect.addEventListener("change", function () {
+        const year = yearSelect.value;
+        const month = monthSelect.value;
+        const day = this.value;
+
+        if (!day) return;
+
+        fetchAndRenderChart(`/admin/revenue/most-favorite/${year}/${month}/${day}`);
+        showLoading(true);
+
+      });
+
+
+
+
+      loadYears();
+    });
+
+  </script>
+
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
