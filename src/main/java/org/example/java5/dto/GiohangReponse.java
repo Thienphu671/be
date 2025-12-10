@@ -1,22 +1,27 @@
 package org.example.java5.dto;
 
+import org.example.java5.entity.Product;
+
 import java.math.BigDecimal;
 
 public class GiohangReponse {
     private int id;
     private int userId;
-    private int productId;
+    private Product product;
     private int quantity;
     private BigDecimal totalPrice ;
 
     // Constructor
-    public GiohangReponse(int id, int userId, int productId, int quantity, BigDecimal totalPrice) {
+    public GiohangReponse(int id, int userId, int productId, String pn, int quantity, BigDecimal totalPrice) {
         this.id = id;
         this.userId = userId;
-        this.productId = productId;
+        this.product = new Product(productId);
+        this.product.setTen(pn);
         this.quantity = quantity;
         this.totalPrice = totalPrice;
     }
+
+
 
     // Getters và Setters
     public int getId() {
@@ -35,12 +40,12 @@ public class GiohangReponse {
         this.userId = userId;
     }
 
-    public int getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public int getQuantity() {

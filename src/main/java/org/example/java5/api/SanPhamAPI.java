@@ -9,7 +9,6 @@ import org.example.java5.repository.SanPhamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,8 +20,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-@PreAuthorize("hasRole('ADMIN')") // hoặc tương đương
-@CrossOrigin(origins = "http://localhost:3000") // nếu React chạy ở 3000
 
 @RestController
 @RequestMapping("/api/admin/sanpham")
@@ -88,7 +85,7 @@ public class SanPhamAPI {
     }
 
     // 🟢 API: Thêm sản phẩm mới
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<?> createProduct(
             @RequestParam("ten") String ten,
             @RequestParam("gia") BigDecimal gia,

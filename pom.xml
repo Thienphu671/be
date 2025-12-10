@@ -190,16 +190,10 @@
         </dependency>
 
         <!-- Spring Boot Security -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
+
 
         <!-- Spring Security Crypto (để mã hóa mật khẩu) -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-crypto</artifactId>
-        </dependency>
+
 
         <!-- JWT (jjwt - Java JWT) -->
         <dependency>

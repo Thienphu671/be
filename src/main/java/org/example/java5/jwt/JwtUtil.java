@@ -2,9 +2,7 @@ package org.example.java5.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -75,15 +73,6 @@ public class JwtUtil {
     }
 
     // Kiểm tra tính hợp lệ của token
-    public boolean isValidToken(String token, UserDetails userDetails) {
-        String username = extractEmail(token);  // Lấy email từ token
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    }
-    // Trích xuất quyền từ token
-    public List<GrantedAuthority> extractAuthorities(String token) {
-        Claims claims = extractAllClaims(token);
-        String role = claims.get("roles", String.class);  // Lấy quyền từ claims
-        return List.of(new SimpleGrantedAuthority(role));  // Chuyển đổi thành GrantedAuthority
-    }
+
 
 }

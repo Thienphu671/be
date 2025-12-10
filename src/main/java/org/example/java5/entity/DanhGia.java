@@ -7,8 +7,12 @@ import java.time.LocalDate;
 @Entity
 public class DanhGia {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "sanpham_id")
+    private Product sanPham;
 
     @ManyToOne
     @JoinColumn(name = "donhang_id")
@@ -18,15 +22,16 @@ public class DanhGia {
     @JoinColumn(name = "taikhoan_id")
     private User taiKhoan;
 
-    private String danhgia;
-    private int sao;
+    @Column(name = "danhgia", columnDefinition = "NVARCHAR(MAX)")
+    private String danhgia;    private int sao;
     private LocalDate ngayDanhgia;
 
     public DanhGia() {
     }
 
-    public DanhGia(Integer id, Order donHang, User taiKhoan, String danhgia, int sao, LocalDate ngayDanhgia) {
+    public DanhGia(Integer id, Product sanPham, Order donHang, User taiKhoan, String danhgia, int sao, LocalDate ngayDanhgia) {
         this.id = id;
+        this.sanPham = sanPham;
         this.donHang = donHang;
         this.taiKhoan = taiKhoan;
         this.danhgia = danhgia;
@@ -40,6 +45,14 @@ public class DanhGia {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Product getSanPham() {
+        return sanPham;
+    }
+
+    public void setSanPham(Product sanPham) {
+        this.sanPham = sanPham;
     }
 
     public Order getDonHang() {
@@ -81,5 +94,5 @@ public class DanhGia {
     public void setNgayDanhgia(LocalDate ngayDanhgia) {
         this.ngayDanhgia = ngayDanhgia;
     }
-    // Getter, Setter
+// Constructor, Getter, Setter...
 }

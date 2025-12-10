@@ -61,6 +61,10 @@ public class User {
         this.resetTokenExpiry = resetTokenExpiry;
     }
 
+    public User(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

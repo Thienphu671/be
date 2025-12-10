@@ -76,6 +76,29 @@ public class Product {
 //    }
 
 
+    public Product() {
+    }
+
+    public Product(Integer id, String ten, String hinh, BigDecimal gia, String kichthuoc, boolean conhang, Integer soluong, String mota, List<Favorite> danhSachYeuThich, List<Giohang> gioHangs, Category danhMuc, LocalDateTime ngayTao, Integer status) {
+        this.id = id;
+        this.ten = ten;
+        this.hinh = hinh;
+        this.gia = gia;
+        this.kichthuoc = kichthuoc;
+        this.conhang = conhang;
+        this.soluong = soluong;
+        this.mota = mota;
+        this.danhSachYeuThich = danhSachYeuThich;
+        this.gioHangs = gioHangs;
+        this.danhMuc = danhMuc;
+        this.ngayTao = ngayTao;
+        this.status = status;
+    }
+
+    public Product(Integer id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }

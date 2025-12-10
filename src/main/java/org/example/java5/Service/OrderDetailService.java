@@ -25,6 +25,9 @@ public class OrderDetailService {
         return orderDetailRepository.findById(id);
     }
 
+    public Optional<OrderDetail> getOrderDetailById(Integer orderDetailId) {
+        return orderDetailRepository.findById(orderDetailId);
+    }
 
     //admin
 

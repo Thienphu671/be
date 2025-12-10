@@ -3,12 +3,10 @@ package org.example.java5.api;
 import org.example.java5.Service.ThongKeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-@PreAuthorize("hasRole('ADMIN')") // hoặc tương đương
 
 @RestController
 @RequestMapping("api/admin/revenue")

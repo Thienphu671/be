@@ -102,19 +102,23 @@ package org.example.java5.dto;
 
 import org.example.java5.entity.OrderDetail;
 
+import java.sql.Date;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class OrderDetailDTO {
     private String customerName;
     private String email;
     private String phoneNumber;
     private String address;
-    private String orderDate;
+    private Date orderDate;
     private String status;
     private String productImage;
     private String productName;
     private int quantity;
     private double price;
+    private List<OrderDetailItemDTO> orderDetails;
+    private Integer productId;
 
     public OrderDetailDTO(OrderDetail orderDetail) {
         // Lấy thông tin người dùng
@@ -135,6 +139,41 @@ public class OrderDetailDTO {
         this.productName = orderDetail.getProduct().getTen();
         this.quantity = orderDetail.getQuantity();
         this.price = orderDetail.getPrice();
+        this.productId = orderDetail.getProduct().getId(); // <- gán id sản phẩm
+    }
+
+    public OrderDetailDTO() {
+    }
+
+    public List<OrderDetailItemDTO> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(List<OrderDetailItemDTO> orderDetails) {
+        this.orderDetails = orderDetails;
+    }
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
+    public OrderDetailDTO(String customerName, String email, String phoneNumber, String address, Date orderDate, String status, String productImage, String productName, int quantity, double price, List<OrderDetailItemDTO> orderDetails, Integer productId) {
+        this.customerName = customerName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.orderDate = orderDate;
+        this.status = status;
+        this.productImage = productImage;
+        this.productName = productName;
+        this.quantity = quantity;
+        this.price = price;
+        this.orderDetails = orderDetails;
+        this.productId = productId;
     }
 
     private String convertStatusToText(int statusCode) {
@@ -179,11 +218,11 @@ public class OrderDetailDTO {
         this.address = address;
     }
 
-    public String getOrderDate() {
+    public Date getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(String orderDate) {
+    public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
     }
 
