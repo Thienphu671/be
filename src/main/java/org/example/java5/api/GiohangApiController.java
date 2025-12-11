@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -138,16 +140,35 @@ public class GiohangApiController {
         return ResponseEntity.ok(responseList);
     }
 
+    @GetMapping("/user/info")
+    public ResponseEntity<?> getCurrentUserInfo(HttpServletRequest request) {
+        Optional<User> userOpt = getUserFromToken(request);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(401).body("Chưa đăng nhập");
+        }
+
+        User user = userOpt.get();
+        Map<String, Object> info = new HashMap<>();
+        info.put("name", user.getFullname() != null ? user.getFullname() : "");
+        info.put("email", user.getEmail());
+        info.put("sdt", user.getPhoneNumber() != null ? user.getPhoneNumber() : ""); // Quan trọng: trả về SĐT
+
+        return ResponseEntity.ok(info);
+    }
+
     // ✅ Convert sang Response DTO
     private GiohangReponse convertToResponse(Giohang giohang) {
-        BigDecimal tongTien = giohang.getSanpham().getGia().multiply(BigDecimal.valueOf(giohang.getSoLuong()));
+        // Tính lại totalPrice để đảm bảo không bao giờ null
+        BigDecimal totalPrice = giohang.getSanpham().getGia()
+                .multiply(BigDecimal.valueOf(giohang.getSoLuong()));
+
         return new GiohangReponse(
                 giohang.getId(),
                 giohang.getTaikhoan().getId(),
                 giohang.getSanpham().getId(),
                 giohang.getSanpham().getTen(),
                 giohang.getSoLuong(),
-                tongTien
+                totalPrice  // ← luôn có giá trị, không null
         );
     }
 }
