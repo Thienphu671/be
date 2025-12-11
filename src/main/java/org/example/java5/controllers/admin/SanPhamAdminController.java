@@ -25,7 +25,7 @@ import java.util.*;
 @RequestMapping("/admin/sanpham")
 public class SanPhamAdminController {
 
-    private static final String UPLOAD_DIR = "D:/Java5/uploads/";
+    private static final String UPLOAD_DIR = "C:/Users/PC/Documents/GitHub/be/uploads";
 
     @Autowired
     private SanPhamService sanPhamService;
