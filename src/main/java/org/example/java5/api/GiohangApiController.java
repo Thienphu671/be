@@ -158,17 +158,18 @@ public class GiohangApiController {
 
     // ✅ Convert sang Response DTO
     private GiohangReponse convertToResponse(Giohang giohang) {
-        // Tính lại totalPrice để đảm bảo không bao giờ null
-        BigDecimal totalPrice = giohang.getSanpham().getGia()
-                .multiply(BigDecimal.valueOf(giohang.getSoLuong()));
+        BigDecimal gia = giohang.getSanpham().getGia();
+        BigDecimal totalPrice = gia.multiply(BigDecimal.valueOf(giohang.getSoLuong()));
 
         return new GiohangReponse(
                 giohang.getId(),
                 giohang.getTaikhoan().getId(),
                 giohang.getSanpham().getId(),
                 giohang.getSanpham().getTen(),
+                giohang.getSanpham().getHinh(),           // tên file ảnh
                 giohang.getSoLuong(),
-                totalPrice  // ← luôn có giá trị, không null
+                gia,                                      // giá 1 cái
+                totalPrice
         );
     }
 }

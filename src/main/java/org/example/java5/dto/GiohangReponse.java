@@ -1,66 +1,40 @@
-package org.example.java5.dto;
+// src/main/java/org/example/java5/dto/GiohangReponse.java
 
-import org.example.java5.entity.Product;
+package org.example.java5.dto;
 
 import java.math.BigDecimal;
 
 public class GiohangReponse {
-    private int id;
-    private int userId;
-    private Product product;
-    private int quantity;
-    private BigDecimal totalPrice ;
+
+    private Integer id;
+    private Integer userId;
+    private Integer sanphamId;
+    private String tenSanPham;
+    private String hinhAnh;        // tên file ảnh
+    private Integer quantity;
+    private BigDecimal giaSanPham; // giá 1 sản phẩm
+    private BigDecimal totalPrice; // tổng tiền = gia * quantity
 
     // Constructor
-    public GiohangReponse(int id, int userId, int productId, String pn, int quantity, BigDecimal totalPrice) {
+    public GiohangReponse(Integer id, Integer userId, Integer sanphamId, String tenSanPham,
+                          String hinhAnh, Integer quantity, BigDecimal giaSanPham, BigDecimal totalPrice) {
         this.id = id;
         this.userId = userId;
-        this.product = new Product(productId);
-        this.product.setTen(pn);
+        this.sanphamId = sanphamId;
+        this.tenSanPham = tenSanPham;
+        this.hinhAnh = hinhAnh;
         this.quantity = quantity;
+        this.giaSanPham = giaSanPham;
         this.totalPrice = totalPrice;
     }
 
-
-
-    // Getters và Setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
-    }
+    // Getters (bắt buộc)
+    public Integer getId() { return id; }
+    public Integer getUserId() { return userId; }
+    public Integer getSanphamId() { return sanphamId; }
+    public String getTenSanPham() { return tenSanPham; }
+    public String getHinhAnh() { return hinhAnh; }
+    public Integer getQuantity() { return quantity; }
+    public BigDecimal getGiaSanPham() { return giaSanPham; }
+    public BigDecimal getTotalPrice() { return totalPrice; }
 }
